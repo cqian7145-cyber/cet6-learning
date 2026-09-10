@@ -80,7 +80,7 @@ export default function Quiz({ progress }: QuizProps) {
 
         <button
           onClick={startQuiz}
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30"
+          className="btn-primary"
         >
           <RotateCcw size={20} /> New Quiz
         </button>
@@ -120,16 +120,16 @@ export default function Quiz({ progress }: QuizProps) {
     <div className="max-w-2xl mx-auto">
       {/* Mode toggle */}
       <div className="flex justify-center mb-6">
-        <div className="inline-flex bg-gray-100 rounded-full p-1">
+        <div className="inline-flex p-1.5 rounded-2xl bg-slate-900/[0.04] border border-slate-200/60">
           <button
             onClick={() => setMode('en-to-cn')}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${mode === 'en-to-cn' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'}`}
+            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${mode === 'en-to-cn' ? 'bg-white text-primary-700 shadow-card' : 'text-slate-500'}`}
           >
             English → Chinese
           </button>
           <button
             onClick={() => setMode('cn-to-en')}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${mode === 'cn-to-en' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'}`}
+            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${mode === 'cn-to-en' ? 'bg-white text-primary-700 shadow-card' : 'text-slate-500'}`}
           >
             Chinese → English
           </button>
@@ -144,17 +144,17 @@ export default function Quiz({ progress }: QuizProps) {
           <span className="text-error-500 font-semibold">{wrongCount} wrong</span>
         </div>
       </div>
-      <div className="w-full h-1.5 bg-gray-200 rounded-full mb-8 overflow-hidden">
-        <div className="h-full bg-primary-500 rounded-full transition-all duration-500" style={{ width: `${((currentIdx) / QUIZ_LENGTH) * 100}%` }} />
+      <div className="progress-track mb-8">
+        <div className="progress-fill" style={{ width: `${((currentIdx) / QUIZ_LENGTH) * 100}%` }} />
       </div>
 
       {/* Question */}
-      <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 mb-6 animate-slide-up" key={currentIdx}>
+      <div className="glass-card shadow-glow p-8 mb-6 animate-slide-up" key={currentIdx}>
         <p className="text-center text-sm text-gray-400 mb-4 font-medium">What does this mean?</p>
         {mode === 'en-to-cn' ? (
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-3">
-              <h2 className="text-4xl font-bold text-gray-900">{currentWord.word}</h2>
+              <h2 className="font-display text-4xl sm:text-5xl text-slate-900 italic">{currentWord.word}</h2>
               <button onClick={() => speak(currentWord.word)} className="p-2 rounded-full bg-primary-50 text-primary-500 hover:bg-primary-100 transition-colors">
                 <Volume2 size={22} />
               </button>

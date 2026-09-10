@@ -1,99 +1,122 @@
 import { useState } from 'react';
 import { useProgress } from '@/hooks/useProgress';
+import { words } from '@/data/words';
 import Flashcard from '@/components/Flashcard';
 import Quiz from '@/components/Quiz';
 import Spelling from '@/components/Spelling';
 import WordList from '@/components/WordList';
 import Dashboard from '@/components/Dashboard';
-import { Layers, ListChecks, Keyboard, BookOpen, BarChart3, GraduationCap } from 'lucide-react';
+import { Layers, ListChecks, Keyboard, BookOpen, BarChart3, GraduationCap, Flame } from 'lucide-react';
 
 type Tab = 'flashcards' | 'quiz' | 'spelling' | 'wordlist' | 'dashboard';
 
-const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'flashcards', label: 'Flashcards', icon: <Layers size={20} /> },
-  { id: 'quiz', label: 'Quiz', icon: <ListChecks size={20} /> },
-  { id: 'spelling', label: 'Spelling', icon: <Keyboard size={20} /> },
-  { id: 'wordlist', label: 'Word List', icon: <BookOpen size={20} /> },
-  { id: 'dashboard', label: 'Progress', icon: <BarChart3 size={20} /> },
+const tabs: { id: Tab; label: string; shortLabel: string; icon: React.ReactNode }[] = [
+  { id: 'flashcards', label: 'Flashcards', shortLabel: 'Cards', icon: <Layers size={18} strokeWidth={2.25} /> },
+  { id: 'quiz', label: 'Quiz', shortLabel: 'Quiz', icon: <ListChecks size={18} strokeWidth={2.25} /> },
+  { id: 'spelling', label: 'Spelling', shortLabel: 'Spell', icon: <Keyboard size={18} strokeWidth={2.25} /> },
+  { id: 'wordlist', label: 'Word List', shortLabel: 'List', icon: <BookOpen size={18} strokeWidth={2.25} /> },
+  { id: 'dashboard', label: 'Progress', shortLabel: 'Stats', icon: <BarChart3 size={18} strokeWidth={2.25} /> },
 ];
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('flashcards');
   const progress = useProgress();
-
+  const masteredCount = words.filter(w => progress.getProgress(w.id).status === 'mastered').length;
+  const masteredPct = Math.round((masteredCount / words.length) * 100);
+  const activeIndex = tabs.findIndex(t => t.id === activeTab);
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+    <div className="min-h-screen flex flex-col">
+      <header className="sticky top-0 z-20 app-header">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2.5">
-              <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 shadow-md shadow-primary-600/20">
-                <GraduationCap size={22} className="text-white" />
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-teal-800 text-white">
+                <GraduationCap size={20} strokeWidth={2.25} />
               </div>
               <div>
-                <h1 className="font-bold text-gray-900 text-lg leading-none">CET-6 Vocabulary</h1>
-                <p className="text-xs text-gray-400 mt-0.5">Master 300 essential words</p>
+                <h1 className="font-bold text-stone-900 text-base sm:text-lg leading-tight tracking-tight">
+                  CET-6 Vocabulary
+                  <span className="hidden sm:inline font-normal text-stone-400 ml-2 text-sm">六级核心词汇</span>
+                </h1>
+                <p className="text-xs text-stone-500 mt-0.5">300 词 · 本地进度</p>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-sm">
-              <span className="text-gray-400 font-medium">{progress.stats.streak}</span>
-              <span className="text-accent-400">day streak</span>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block text-right">
+                <span className="section-label block">Mastered</span>
+                <span className="text-sm font-bold text-teal-800 tabular-nums">{masteredPct}%</span>
+              </div>
+              <div
+                key={progress.stats.streak}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-stone-200 animate-streak-pop"
+              >
+                <Flame size={16} className="text-amber-600" />
+                <span className="text-sm font-bold text-stone-800 tabular-nums">{progress.stats.streak}</span>
+                <span className="text-xs text-stone-500 hidden min-[380px]:inline">天</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tab navigation */}
-        <nav className="max-w-5xl mx-auto px-2 sm:px-6">
-          <div className="flex gap-1 overflow-x-auto pb-px">
+        <nav className="max-w-5xl mx-auto px-4 sm:px-6 pb-4 hidden sm:block">
+          <div className="nav-rail">
+            <div
+              className="nav-rail-indicator"
+              style={{
+                width: `calc((100% - 8px) / ${tabs.length})`,
+                left: `calc(4px + ${activeIndex} * ((100% - 8px) / ${tabs.length}))`,
+              }}
+              aria-hidden
+            />
             {tabs.map(tab => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
+                className={`relative z-10 flex-1 flex items-center justify-center gap-2 px-2 py-2.5 text-sm font-medium transition-colors duration-200 ${
+                  activeTab === tab.id ? 'text-stone-900' : 'text-stone-500 hover:text-stone-700'
                 }`}
               >
                 {tab.icon}
-                <span className="hidden sm:inline">{tab.label}</span>
+                {tab.label}
               </button>
             ))}
           </div>
         </nav>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 py-8 px-4 sm:px-6">
-        {activeTab === 'flashcards' && <Flashcard progress={progress} />}
-        {activeTab === 'quiz' && <Quiz progress={progress} />}
-        {activeTab === 'spelling' && <Spelling progress={progress} />}
-        {activeTab === 'wordlist' && <WordList progress={progress} />}
-        {activeTab === 'dashboard' && <Dashboard progress={progress} />}
+      <main className="flex-1 py-8 sm:py-10 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto animate-page-enter" key={activeTab}>
+          {activeTab === 'flashcards' && <Flashcard progress={progress} />}
+          {activeTab === 'quiz' && <Quiz progress={progress} />}
+          {activeTab === 'spelling' && <Spelling progress={progress} />}
+          {activeTab === 'wordlist' && <WordList progress={progress} />}
+          {activeTab === 'dashboard' && <Dashboard progress={progress} />}
+        </div>
       </main>
 
-      {/* Mobile bottom nav */}
-      <nav className="sm:hidden bg-white border-t border-gray-100 sticky bottom-0">
-        <div className="flex justify-around">
+      <nav className="sm:hidden sticky bottom-0 z-20 app-header border-t pb-[env(safe-area-inset-bottom)]">
+        <div className="flex justify-around px-1 py-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 py-3 px-3 transition-colors ${
-                activeTab === tab.id ? 'text-primary-600' : 'text-gray-400'
+              className={`flex flex-col items-center gap-0.5 py-2 px-2 min-w-[4rem] rounded-lg transition-all duration-200 ${
+                activeTab === tab.id
+                  ? 'text-teal-800 bg-white border border-stone-200 shadow-sm scale-105'
+                  : 'text-stone-400'
               }`}
             >
               {tab.icon}
-              <span className="text-xs font-medium">{tab.label}</span>
+              <span className="text-[10px] font-semibold">{tab.shortLabel}</span>
             </button>
           ))}
         </div>
       </nav>
 
-      {/* Footer */}
-      <footer className="text-center py-6 text-xs text-gray-400">
-        <p>CET-6 Vocabulary Trainer · Your progress is saved locally</p>
+      <footer className="text-center py-8 text-xs text-stone-400 pb-24 sm:pb-8">
+        <p>CET-6 Vocabulary Trainer · Progress saved on this device</p>
       </footer>
     </div>
   );

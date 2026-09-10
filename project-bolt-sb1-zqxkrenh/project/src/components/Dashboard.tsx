@@ -45,13 +45,19 @@ export default function Dashboard({ progress }: DashboardProps) {
       {/* Progress ring + breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Overall progress */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col items-center justify-center">
+        <div className="glass-card p-8 flex flex-col items-center justify-center">
           <h3 className="text-sm font-semibold text-gray-400 mb-6">Overall Progress</h3>
           <div className="relative">
             <svg width="160" height="160" className="transform -rotate-90">
-              <circle cx="80" cy="80" r="68" fill="none" stroke="#e5e7eb" strokeWidth="12" />
+              <defs>
+                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#8b5cf6" />
+                </linearGradient>
+              </defs>
+              <circle cx="80" cy="80" r="68" fill="none" stroke="#e2e8f0" strokeWidth="12" />
               <circle
-                cx="80" cy="80" r="68" fill="none" stroke="#3478f6" strokeWidth="12" strokeLinecap="round"
+                cx="80" cy="80" r="68" fill="none" stroke="url(#progressGradient)" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={2 * Math.PI * 68}
                 strokeDashoffset={2 * Math.PI * 68 * (1 - progressPct / 100)}
                 className="progress-ring__circle"
@@ -66,8 +72,8 @@ export default function Dashboard({ progress }: DashboardProps) {
         </div>
 
         {/* Word status breakdown */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-          <h3 className="text-sm font-semibold text-gray-400 mb-6">Word Status Breakdown</h3>
+        <div className="glass-card p-8">
+          <h3 className="section-label mb-6">Word Status Breakdown</h3>
           <div className="space-y-5">
             <StatusBar label="Mastered" count={stats_map.mastered} total={words.length} color="bg-success-500" textColor="text-success-600" />
             <StatusBar label="Learning" count={stats_map.learning} total={words.length} color="bg-warning-400" textColor="text-warning-600" />
@@ -89,7 +95,7 @@ export default function Dashboard({ progress }: DashboardProps) {
       </div>
 
       {/* Recent activity */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+      <div className="glass-card p-6">
         <div className="flex items-center gap-2 mb-5">
           <BarChart3 size={18} className="text-primary-500" />
           <h3 className="text-sm font-semibold text-gray-400">Recently Studied</h3>
@@ -128,7 +134,7 @@ function StatCard({ icon, value, label, color }: { icon: React.ReactNode; value:
     warning: 'bg-warning-50 text-warning-600',
   };
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+    <div className="glass-card rounded-2xl p-5">
       <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3 ${colorMap[color]}`}>
         {icon}
       </div>

@@ -54,21 +54,18 @@ export default function WordList({ progress }: WordListProps) {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search words, meanings, or definitions..."
-          className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-gray-200 bg-white focus:border-primary-400 outline-none transition-colors text-gray-700"
+          className="input-field pl-12 pr-4 py-3.5"
         />
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="filter-bar mb-6">
         {(['all', 'new', 'learning', 'mastered'] as const).map(f => (
           <button
             key={f}
+            type="button"
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              filter === f
-                ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-primary-300'
-            }`}
+            className={`filter-tab ${filter === f ? 'is-active' : ''}`}
           >
             {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
@@ -84,8 +81,8 @@ export default function WordList({ progress }: WordListProps) {
           return (
             <div
               key={w.id}
-              className={`bg-white rounded-2xl border transition-all overflow-hidden ${
-                isExpanded ? 'border-primary-200 shadow-md' : 'border-gray-100 hover:border-gray-200'
+              className={`surface-card transition-all overflow-hidden ${
+                isExpanded ? 'border-teal-600/40 shadow-[0_4px_16px_rgba(0,0,0,0.06)]' : 'hover:border-stone-300'
               }`}
             >
               <div

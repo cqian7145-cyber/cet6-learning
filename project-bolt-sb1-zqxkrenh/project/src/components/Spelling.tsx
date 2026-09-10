@@ -106,7 +106,7 @@ export default function Spelling({ progress }: SpellingProps) {
             <p className="text-xs text-gray-400 mt-1 font-medium">Wrong</p>
           </div>
         </div>
-        <button onClick={startRound} className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
+        <button onClick={startRound} className="btn-primary">
           <RotateCcw size={20} /> New Round
         </button>
       </div>
@@ -125,12 +125,12 @@ export default function Spelling({ progress }: SpellingProps) {
           <span className="text-error-500 font-semibold">{wrongCount} wrong</span>
         </div>
       </div>
-      <div className="w-full h-1.5 bg-gray-200 rounded-full mb-8 overflow-hidden">
-        <div className="h-full bg-primary-500 rounded-full transition-all duration-500" style={{ width: `${(currentIdx / ROUND_LENGTH) * 100}%` }} />
+      <div className="progress-track mb-8">
+        <div className="progress-fill" style={{ width: `${(currentIdx / ROUND_LENGTH) * 100}%` }} />
       </div>
 
       {/* Prompt card */}
-      <div className={`bg-white rounded-3xl shadow-lg border p-8 mb-6 transition-all ${result === 'correct' ? 'border-success-300' : result === 'wrong' ? 'border-error-300 animate-shake' : 'border-gray-100'}`} key={currentIdx}>
+      <div className={`glass-card p-8 mb-6 transition-all ${result === 'correct' ? 'ring-2 ring-success-300/80' : result === 'wrong' ? 'ring-2 ring-error-300/80 animate-shake' : ''}`} key={currentIdx}>
         <div className="text-center">
           <p className="text-sm text-gray-400 mb-4 font-medium">Type the word that matches:</p>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">{currentWord.translation}</h2>
@@ -169,10 +169,10 @@ export default function Spelling({ progress }: SpellingProps) {
             onChange={e => setInput(e.target.value)}
             disabled={result !== null}
             placeholder="Type the word here..."
-            className={`w-full px-6 py-4 rounded-2xl border-2 text-lg font-medium text-center outline-none transition-all ${
+            className={`input-premium px-6 py-4 text-lg font-medium text-center border-2 ${
               result === 'correct' ? 'border-success-400 bg-success-50 text-success-700' :
               result === 'wrong' ? 'border-error-400 bg-error-50 text-error-600' :
-              'border-gray-200 focus:border-primary-400 bg-white text-gray-900'
+              'text-slate-900'
             }`}
             autoComplete="off"
             autoCorrect="off"
@@ -183,7 +183,7 @@ export default function Spelling({ progress }: SpellingProps) {
         </div>
 
         {result === null && (
-          <button type="submit" className="w-full mt-4 py-3.5 rounded-2xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
+          <button type="submit" className="w-full mt-4 btn-primary">
             Submit Answer
           </button>
         )}
@@ -204,7 +204,7 @@ export default function Spelling({ progress }: SpellingProps) {
               <p className="text-error-500 text-sm mt-1">{currentWord.example}</p>
             </div>
           )}
-          <button onClick={handleNext} className="w-full mt-4 py-3.5 rounded-2xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/30">
+          <button onClick={handleNext} className="w-full mt-4 btn-primary">
             {currentIdx + 1 >= ROUND_LENGTH ? 'See Results' : 'Next Word'}
           </button>
         </div>

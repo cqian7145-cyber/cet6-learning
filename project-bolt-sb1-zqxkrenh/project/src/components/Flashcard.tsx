@@ -92,16 +92,13 @@ export default function Flashcard({ progress }: FlashcardProps) {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-6 justify-center flex-wrap">
+      <div className="filter-bar mb-6 justify-center sm:justify-start">
         {(['all', 'new', 'learning', 'mastered'] as const).map(f => (
           <button
             key={f}
+            type="button"
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              filter === f
-                ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-primary-300'
-            }`}
+            className={`filter-tab ${filter === f ? 'is-active' : ''}`}
           >
             {f === 'all' ? 'All Words' : f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
@@ -110,7 +107,7 @@ export default function Flashcard({ progress }: FlashcardProps) {
 
       {/* Counter */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-gray-500 font-medium">
+        <span className="text-sm text-slate-500 font-medium tabular-nums">
           {filteredWords.length > 0 ? filteredIndex + 1 : 0} / {filteredWords.length}
         </span>
         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[wordProgress.status]}`}>
@@ -119,18 +116,22 @@ export default function Flashcard({ progress }: FlashcardProps) {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-gray-200 rounded-full mb-6 overflow-hidden">
+      <div className="progress-track mb-6">
         <div
-          className="h-full bg-primary-500 rounded-full transition-all duration-500"
+          className="progress-fill"
           style={{ width: `${filteredWords.length > 0 ? ((filteredIndex + 1) / filteredWords.length) * 100 : 0}%` }}
         />
       </div>
 
       {/* Flashcard */}
-      <div className="flip-card mb-6" style={{ height: '420px' }}>
+      <div
+        key={index}
+        className={`flip-card mb-6 ${direction === 'forward' ? 'animate-card-enter-right' : 'animate-card-enter-left'}`}
+        style={{ height: '420px' }}
+      >
         <div className={`flip-card-inner relative w-full h-full ${flipped ? 'is-flipped' : ''}`}>
           {/* Front face - English */}
-          <div className="flip-card-face absolute inset-0 bg-white rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center justify-center p-8 cursor-pointer"
+          <div className="flip-card-face absolute inset-0 surface-card flex flex-col items-center justify-center p-8 cursor-pointer"
                onClick={() => setFlipped(true)}>
             <div className="absolute top-5 left-5">
               <span className="text-xs font-semibold text-primary-400 bg-primary-50 px-3 py-1 rounded-full">
@@ -144,7 +145,7 @@ export default function Flashcard({ progress }: FlashcardProps) {
               <Volume2 size={20} />
             </button>
             <div className="text-center">
-              <h2 className="text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+              <h2 className="font-display text-5xl sm:text-6xl font-normal text-slate-900 mb-4 tracking-tight italic">
                 {currentWord.word}
               </h2>
               <p className="text-lg text-gray-400 font-medium mb-8">{currentWord.phonetic}</p>
@@ -156,7 +157,7 @@ export default function Flashcard({ progress }: FlashcardProps) {
           </div>
 
           {/* Back face - Chinese + example */}
-          <div className="flip-card-face flip-card-back absolute inset-0 bg-white rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center justify-center p-8 cursor-pointer"
+          <div className="flip-card-face flip-card-back absolute inset-0 surface-card flex flex-col items-center justify-center p-8 cursor-pointer"
                onClick={() => setFlipped(false)}>
             <div className="text-center w-full">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">{currentWord.translation}</h2>
@@ -178,39 +179,28 @@ export default function Flashcard({ progress }: FlashcardProps) {
 
       {/* Controls */}
       <div className="flex items-center justify-between gap-4">
-        <button
-          onClick={goPrev}
-          className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-primary-300 hover:text-primary-500 transition-all shadow-sm"
-        >
-          <ChevronLeft size={24} />
+        <button type="button" onClick={goPrev} className="btn-icon shrink-0" aria-label="Previous word">
+          <ChevronLeft size={22} />
         </button>
 
-        <div className="flex gap-3 flex-1 justify-center">
-          <button
-            onClick={() => handleAnswer(false)}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-error-50 text-error-600 font-semibold hover:bg-error-100 transition-all border border-error-200"
-          >
-            <X size={20} /> Don't Know
+        <div className="flex gap-2 flex-1 justify-center flex-wrap sm:flex-nowrap">
+          <button type="button" onClick={() => handleAnswer(false)} className="btn-action-danger flex-1 sm:flex-none">
+            <X size={18} strokeWidth={2.25} />
+            <span className="hidden min-[380px]:inline">不熟</span>
+            <span className="min-[380px]:hidden">No</span>
           </button>
-          <button
-          onClick={() => setFlipped(!flipped)}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary-50 text-primary-600 font-semibold hover:bg-primary-100 transition-all border border-primary-200"
-          >
-          <RotateCcw size={20} /> Flip
+          <button type="button" onClick={() => setFlipped(!flipped)} className="btn-action-neutral flex-1 sm:flex-none">
+            <RotateCcw size={18} strokeWidth={2.25} className="flip-icon" />
+            翻转
           </button>
-          <button
-            onClick={() => handleAnswer(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-success-50 text-success-600 font-semibold hover:bg-success-100 transition-all border border-success-200"
-          >
-            <Check size={20} /> Know It
+          <button type="button" onClick={() => handleAnswer(true)} className="btn-action-success flex-1 sm:flex-none">
+            <Check size={18} strokeWidth={2.25} />
+            认识
           </button>
         </div>
 
-        <button
-          onClick={goNext}
-          className="p-3 rounded-full bg-white border border-gray-200 text-gray-600 hover:border-primary-300 hover:text-primary-500 transition-all shadow-sm"
-        >
-          <ChevronRight size={24} />
+        <button type="button" onClick={goNext} className="btn-icon shrink-0" aria-label="Next word">
+          <ChevronRight size={22} />
         </button>
       </div>
 

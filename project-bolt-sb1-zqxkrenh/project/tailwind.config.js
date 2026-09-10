@@ -5,28 +5,28 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#eef6ff',
-          100: '#d9eaff',
-          200: '#bcd9ff',
-          300: '#8ec1ff',
-          400: '#599dff',
-          500: '#3478f6',
-          600: '#1e5be0',
-          700: '#1948b8',
-          800: '#1a3e94',
-          900: '#1b3775',
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
         },
         accent: {
-          50: '#fef9ee',
-          100: '#fdecd3',
-          200: '#fad5a5',
-          300: '#f7b76d',
-          400: '#f4933a',
-          500: '#f2761a',
-          600: '#e35c0f',
-          700: '#bd4510',
-          800: '#973814',
-          900: '#7a3013',
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
         },
         success: {
           50: '#ecfdf5',
@@ -64,9 +64,19 @@ export default {
           800: '#991b1b',
           900: '#7f1d1d',
         },
+        surface: {
+          DEFAULT: 'rgba(255, 255, 255, 0.72)',
+          muted: 'rgba(248, 250, 252, 0.85)',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Instrument Serif"', 'Georgia', 'serif'],
+      },
+      boxShadow: {
+        soft: '0 8px 40px -12px rgba(15, 23, 42, 0.12)',
+        glow: '0 0 0 1px rgba(99, 102, 241, 0.08), 0 20px 50px -20px rgba(79, 70, 229, 0.35)',
+        card: '0 4px 24px -4px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.04)',
       },
       animation: {
         'flip-in': 'flipIn 0.5s ease-in-out',
@@ -74,6 +84,7 @@ export default {
         'fade-in': 'fadeIn 0.3s ease-out',
         'shake': 'shake 0.4s ease-in-out',
         'pop': 'pop 0.3s ease-out',
+        'float': 'float 8s ease-in-out infinite',
       },
       keyframes: {
         flipIn: {
@@ -96,6 +107,10 @@ export default {
         pop: {
           '0%': { transform: 'scale(0.9)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(2%, -2%) scale(1.02)' },
         },
       },
     },
