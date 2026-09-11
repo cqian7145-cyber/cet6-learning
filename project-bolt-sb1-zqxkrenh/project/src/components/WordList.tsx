@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
-import { words, type Word } from '@/data/words';
+import { useState, useMemo, useRef } from 'react';
+import { words } from '@/data/words';
 import { useProgress, type WordStatus } from '@/hooks/useProgress';
+import { useStagger } from '@/hooks/useMotion';
 import { Search, Volume2, Check, X, BookOpen } from 'lucide-react';
 
 interface WordListProps {
@@ -12,6 +13,10 @@ export default function WordList({ progress }: WordListProps) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'new' | 'learning' | 'mastered'>('all');
   const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  // 词条列表挂载时前 N 个依次进入（限制数量，避免 300 条全量动画）
+  useStagger(listRef, '[data-word-item]', { max: 10, stagger: 25 });
 
   const filtered = useMemo(() => {
     let result = words;
@@ -74,13 +79,14 @@ export default function WordList({ progress }: WordListProps) {
       </div>
 
       {/* Word list */}
-      <div className="space-y-2">
+      <div ref={listRef} className="space-y-2">
         {filtered.map((w) => {
           const p = getProgress(w.id);
           const isExpanded = expandedId === w.id;
           return (
             <div
               key={w.id}
+              data-word-item
               className={`surface-card transition-all overflow-hidden ${
                 isExpanded ? 'border-teal-600/40 shadow-[0_4px_16px_rgba(0,0,0,0.06)]' : 'hover:border-stone-300'
               }`}

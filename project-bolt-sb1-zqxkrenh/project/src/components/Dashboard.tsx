@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { words } from '@/data/words';
-import { useProgress, type StudyStats, type ProgressData } from '@/hooks/useProgress';
+import { useProgress } from '@/hooks/useProgress';
+import { useStagger, useCountUp } from '@/hooks/useMotion';
 import { Flame, Target, TrendingUp, BookOpen, CheckCircle2, RotateCcw, Award, BarChart3 } from 'lucide-react';
 
 interface DashboardProps {
@@ -9,6 +10,9 @@ interface DashboardProps {
 
 export default function Dashboard({ progress }: DashboardProps) {
   const { stats, getProgress, resetProgress } = progress;
+  const statsGridRef = useRef<HTMLDivElement>(null);
+  // 4 个统计卡片挂载时依次进入（stagger）
+  useStagger(statsGridRef, '[data-stat-card]');
 
   const stats_map = useMemo(() => {
     let mastered = 0, learning = 0, newCount = 0;
@@ -35,9 +39,9 @@ export default function Dashboard({ progress }: DashboardProps) {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Hero stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div ref={statsGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard icon={<Flame size={24} />} value={stats.streak} label="Day Streak" color="accent" />
-        <StatCard icon={<Target size={24} />} value={`${accuracy}%`} label="Accuracy" color="primary" />
+        <StatCard icon={<Target size={24} />} value={accuracy} suffix="%" label="Accuracy" color="primary" />
         <StatCard icon={<TrendingUp size={24} />} value={stats.totalStudied} label="Total Attempts" color="success" />
         <StatCard icon={<BookOpen size={24} />} value={stats_map.mastered} label="Words Mastered" color="warning" />
       </div>
@@ -126,19 +130,22 @@ export default function Dashboard({ progress }: DashboardProps) {
   );
 }
 
-function StatCard({ icon, value, label, color }: { icon: React.ReactNode; value: string | number; label: string; color: string }) {
+function StatCard({ icon, value, suffix = '', label, color }: { icon: React.ReactNode; value: number; suffix?: string; label: string; color: string }) {
   const colorMap: Record<string, string> = {
     primary: 'bg-primary-50 text-primary-600',
     accent: 'bg-accent-50 text-accent-600',
     success: 'bg-success-50 text-success-600',
     warning: 'bg-warning-50 text-warning-600',
   };
+  const valueRef = useRef<HTMLParagraphElement>(null);
+  // 数字从 0 平滑滚动到最终值，仅在挂载/值变化时触发
+  useCountUp(valueRef, value, { format: (v) => `${Math.round(v)}${suffix}` });
   return (
-    <div className="glass-card rounded-2xl p-5">
+    <div data-stat-card className="glass-card rounded-2xl p-5">
       <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3 ${colorMap[color]}`}>
         {icon}
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p ref={valueRef} className="text-2xl font-bold text-gray-900">{value}{suffix}</p>
       <p className="text-xs text-gray-400 font-medium">{label}</p>
     </div>
   );

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { words, type Word } from '@/data/words';
 import { useProgress } from '@/hooks/useProgress';
 import { Check, X, Volume2, Trophy, RotateCcw, ChevronRight } from 'lucide-react';
+import { animateHighlight, animateShake } from '@/lib/motion';
 
 interface QuizProps {
   progress: ReturnType<typeof useProgress>;
@@ -90,13 +91,20 @@ export default function Quiz({ progress }: QuizProps) {
 
   if (!currentWord) return null;
 
-  const handleSelect = (wordId: number) => {
+  const handleSelect = (wordId: number, el: HTMLElement) => {
     if (selected !== null) return;
     setSelected(wordId);
     const correct = wordId === currentWord.id;
     recordAnswer(currentWord.id, correct);
-    if (correct) setScore(s => s + 1);
-    else setWrongCount(w => w + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      // 选对：轻微高亮，不做夸张弹跳
+      animateHighlight(el);
+    } else {
+      setWrongCount(w => w + 1);
+      // 选错：轻微水平 shake，只一次、幅度小
+      animateShake(el);
+    }
     setTimeout(() => {
       if (currentIdx + 1 >= QUIZ_LENGTH) {
         setFinished(true);
@@ -183,7 +191,7 @@ export default function Quiz({ progress }: QuizProps) {
           return (
             <button
               key={opt.id}
-              onClick={() => handleSelect(opt.id)}
+              onClick={(e) => handleSelect(opt.id, e.currentTarget)}
               disabled={selected !== null}
               className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all text-left ${cls}`}
             >

@@ -1,7 +1,8 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { words, type Word } from '@/data/words';
 import { useProgress } from '@/hooks/useProgress';
 import { Check, X, Volume2, RotateCcw, Sparkles, Keyboard } from 'lucide-react';
+import { animateSuccess } from '@/lib/motion';
 
 interface SpellingProps {
   progress: ReturnType<typeof useProgress>;
@@ -29,6 +30,7 @@ export default function Spelling({ progress }: SpellingProps) {
   const [finished, setFinished] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const successIconRef = useRef<SVGSVGElement>(null);
 
   const startRound = () => {
     setRoundWords(shuffle(words).slice(0, ROUND_LENGTH));
@@ -50,6 +52,13 @@ export default function Spelling({ progress }: SpellingProps) {
       inputRef.current.focus();
     }
   }, [currentIdx, result]);
+
+  // 拼写正确：成功图标 scale 0.8 → 1.08 → 1 弹一下
+  useEffect(() => {
+    if (result === 'correct' && successIconRef.current) {
+      animateSuccess(successIconRef.current);
+    }
+  }, [result]);
 
   const currentWord = roundWords[currentIdx];
 
@@ -178,7 +187,7 @@ export default function Spelling({ progress }: SpellingProps) {
             autoCorrect="off"
             spellCheck={false}
           />
-          {result === 'correct' && <Check size={24} className="absolute right-5 top-1/2 -translate-y-1/2 text-success-500" />}
+          {result === 'correct' && <Check ref={successIconRef} size={24} className="absolute right-5 top-1/2 -translate-y-1/2 text-success-500" />}
           {result === 'wrong' && <X size={24} className="absolute right-5 top-1/2 -translate-y-1/2 text-error-500" />}
         </div>
 

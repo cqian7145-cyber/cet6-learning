@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { words, type Word } from '@/data/words';
+import { words } from '@/data/words';
 import { useProgress, type WordStatus } from '@/hooks/useProgress';
 import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Volume2, BookOpen } from 'lucide-react';
 
